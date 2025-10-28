@@ -517,6 +517,13 @@ app.post('/owners', (req, res) => {
     });
 });
 
+
+app.use((req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
+
+
+
 // 🚀 START SERVER
 const PORT = 5000;
 app.listen(PORT, () => {
@@ -544,3 +551,4 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
