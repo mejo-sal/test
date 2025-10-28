@@ -8,6 +8,48 @@ const fs = require('fs');
 const app = express();
 app.use(express.json());
 
+
+
+
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'Glam&Glow WhatsApp Bot', 
+        status: 'Running',
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get('/test', (req, res) => {
+    res.json({
+        message: 'Test endpoint working! 🎉',
+        serverTime: new Date().toISOString()
+    });
+});
+
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Log all requests
+app.use((req, res, next) => {
+    console.log('📨 Request:', req.method, req.url);
+    next();
+});
+
+
+
+
+
+
+
+
+
+
+
 // 📁 Storage files
 const STORAGE_FILE = './customer_phones.json';
 const WEBHOOK_LOG_FILE = './webhook_logs.json';
@@ -476,7 +518,7 @@ app.post('/owners', (req, res) => {
 });
 
 // 🚀 START SERVER
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`
 🕯 GLAM&GLOW WHATSAPP BOT STARTED
