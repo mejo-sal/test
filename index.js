@@ -128,20 +128,25 @@ app.post('/webhooks/wuilt', async (req, res) => {
         
         const { event, payload, metadata } = req.body;
         
-         if (!event || !payload) {
-            return res.status(200).json({ 
-                status: 'OK',
-                message: 'Invalid webhook format - but responding with 200',
-                timestamp: new Date().toISOString()
-            }); 
-        } 
+        // ⬇️ دائماً نرد بـ 200 أولاً
+        res.status(200).json({ 
+            status: 'OK',
+            message: 'Webhook received successfully',
+            timestamp: new Date().toISOString()
+        });
+
+        // ⬇️ ثم نتحقق إذا كان فيه بيانات صحيحة عشان نكمل
+        if (!event || !payload) {
+            console.log('⚠️ Invalid webhook format - skipping processing');
+            return;
+        }
 
         // Duplicate detection
         const webhookSignature = `${event}-${metadata?.timestamp}-${payload.order?.orderId || payload.order?._id}`;
         
         //if (webhookLogs[webhookSignature]) {
-         //   console.log('🔄 Duplicate webhook skipped:', webhookSignature);
-          //  return res.status(200).send('OK - Already processed');
+        //   console.log('🔄 Duplicate webhook skipped:', webhookSignature);
+        //   return;
         //}
 
         webhookLogs[webhookSignature] = {
@@ -149,9 +154,6 @@ app.post('/webhooks/wuilt', async (req, res) => {
             event: event
         };
         saveStorageData();
-
-        // Respond immediately
-        res.status(200).send('OK');
 
         if (!client.info) {
             console.log('⚠️ WhatsApp client not ready');
@@ -176,6 +178,7 @@ app.post('/webhooks/wuilt', async (req, res) => {
                         break;
                     default:
                         console.log(`⚡ Unhandled event: ${event}`);
+                        result = 'unhandled_event';
                 }
                 
                 console.log(`✅ ${event} processed - Result: ${result}`);
@@ -187,7 +190,7 @@ app.post('/webhooks/wuilt', async (req, res) => {
 
     } catch (error) {
         console.error('💥 Webhook error:', error);
-        res.status(500).send('Internal Server Error');
+        // حتى في حالة الخطأ نكون قد أرسلنا 200 بالفعل
     }
 });
 
@@ -555,6 +558,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
