@@ -128,12 +128,13 @@ app.post('/webhooks/wuilt', async (req, res) => {
         
         const { event, payload, metadata } = req.body;
         
-        if (!event || !payload) {
+         if (!event || !payload) {
             return res.status(200).json({ 
                 status: 'OK',
                 message: 'Invalid webhook format - but responding with 200',
                 timestamp: new Date().toISOString()
-        }
+            }); 
+        } 
 
         // Duplicate detection
         const webhookSignature = `${event}-${metadata?.timestamp}-${payload.order?.orderId || payload.order?._id}`;
@@ -554,6 +555,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
