@@ -300,7 +300,7 @@ async function handleShipmentUpdate(payload) {
                     break;
                     
                 case 'OrderShipmentIsOnTheWay':
-                    await handleInTransitEvent(customerPhone, customerName, orderNumber, shippingCompany);
+                   // await handleInTransitEvent(customerPhone, customerName, orderNumber, shippingCompany);
                     break;
                     
                 default:
@@ -558,6 +558,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
