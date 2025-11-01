@@ -119,6 +119,52 @@ client.on('ready', () => {
 
 client.initialize();
 
+
+
+
+
+// 🧾 Debug Middleware - log every incoming request in detail
+app.use((req, res, next) => {
+  console.log('📨 New Request Received:');
+  console.log('➡️ Method:', req.method);
+  console.log('➡️ URL:', req.originalUrl);
+  console.log('➡️ Headers:', req.headers);
+
+  // Try to print parsed body if available
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log('📦 Parsed Body:', JSON.stringify(req.body, null, 2));
+    return next();
+  }
+
+  // If body is empty, print raw data to debug webhook format
+  let rawData = '';
+  req.on('data', chunk => rawData += chunk);
+  req.on('end', () => {
+    if (rawData.length > 0) {
+      console.log('⚠️ Raw Body (unparsed):', rawData);
+      try {
+        const parsed = JSON.parse(rawData);
+        console.log('✅ Parsed manually:', JSON.stringify(parsed, null, 2));
+      } catch {
+        console.log('❌ Failed to parse JSON manually');
+      }
+    } else {
+      console.log('⚠️ No body received in request.');
+    }
+  });
+
+  next();
+});
+
+
+
+
+
+
+
+
+
+
 // 🎯 MAIN WEBHOOK ENDPOINT
 app.post('/webhooks/wuilt', async (req, res) => {
     const startTime = Date.now();
@@ -558,6 +604,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
