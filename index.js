@@ -290,7 +290,8 @@ We're getting it ready and it'll start processing shortly.
 
 🧾 Total: ${totalAmount} EGP  
 
-You'll get another message once the shipping company picks it up for delivery 🚚  
+You'll get another message once the shipping company picks it up for delivery 🚚
+
 Thanks for choosing Glam&Glow — we can't wait for you to enjoy your order! ✨`;
 
         // 🛍️ STORE OWNERS MESSAGE - New Order Notification
@@ -625,6 +626,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
