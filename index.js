@@ -168,12 +168,17 @@ app.use((req, res, next) => {
 // 🎯 MAIN WEBHOOK ENDPOINT
 app.post('/webhooks/wuilt', async (req, res) => {
     const startTime = Date.now();
-    
+
     try {
         console.log('📦 Received Webhook');
-        
-        const { event, payload, metadata } = req.body;
-        
+        console.log('📨 Full Body:', JSON.stringify(req.body, null, 2));
+
+        // ✅ Adjusted for new Wuilt format
+        const data = req.body.data || {};
+        const event = data.event || req.body.event;
+        const payload = data.payload || req.body.payload;
+        const metadata = data.metadata || req.body.metadata;
+
         // ⬇️ دائماً نرد بـ 200 أولاً
         res.status(200).json({ 
             status: 'OK',
@@ -207,6 +212,21 @@ app.post('/webhooks/wuilt', async (req, res) => {
         }
 
         console.log(`🔔 Processing ${event}`);
+
+        // ✅ Print basic order info for debugging
+        if (payload?.order) {
+            const order = payload.order;
+            console.log('🆔 Order ID:', order._id || order.orderId);
+            console.log('👤 Customer:', order.customer?.name, order.customer?.phone || order.shippingAddress?.phone);
+            console.log('💰 Total:', order.totalPrice?.amount, order.totalPrice?.currencyCode);
+            console.log('📦 Items Count:', order.items?.length);
+            if (order.items?.length) {
+                console.log('🛍️ Items List:');
+                order.items.forEach(item => {
+                    console.log(`   - ${item.title} × ${item.quantity}`);
+                });
+            }
+        }
 
         // Process webhook
         setImmediate(async () => {
@@ -361,6 +381,7 @@ async function handleShipmentUpdate(payload) {
         return 'error';
     }
 }
+
 
 // 🚚 PICKUP EVENT HANDLER
 async function handlePickupEvent(customerPhone, customerName, orderNumber, shippingCompany) {
@@ -604,6 +625,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
