@@ -295,9 +295,11 @@ You'll get another message once the shipping company picks it up for delivery �
 Thanks for choosing Glam&Glow — we can't wait for you to enjoy your order! ✨`;
 
         // 🛍️ STORE OWNERS MESSAGE - New Order Notification
-        const itemsList = order.items.map(item => 
-            `- ${item.title} × ${item.quantity}`
-        ).join('\n');
+        const itemsList = order.items.map(item => {
+        const sizeOption = item.options.find(opt => opt.name === 'Size');
+        const size = sizeOption ? sizeOption.value : '';
+        return `- ${item.title}${size ? ` (${size})` : ''} × ${item.quantity}`;
+    }).join('\n');
 
         const ownerMessage = `🛍 New Order Received!
 
@@ -626,6 +628,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
