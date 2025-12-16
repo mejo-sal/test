@@ -283,16 +283,19 @@ async function handleOrderPlaced(order) {
         const totalAmount = order.totalPrice.amount;
 
         // 🕯️ CUSTOMER MESSAGE - Order Confirmation
-        const customerMessage = `Hey ${customerName} 💛  
+        const customerMessage = `Hey ${customerName} 💛
 
-Your Glam&Glow order (#${orderNumber}) has been successfully placed! 🕯  
-We're getting it ready and it'll start processing shortly.  
+Your Glam&Glow order (#${orderNumber}) has been successfully placed and it’s currently under processing! 🕯
 
-🧾 Total: ${totalAmount} EGP  
+🧾 Total: ${totalAmount} EGP
 
-You'll get another message once the shipping company picks it up for delivery 🚚
+You’ll get another message once the shipping company picks it up for delivery 🚚
 
-Thanks for choosing Glam&Glow — we can't wait for you to enjoy your order! ✨`;
+✨ Important:
+• To confirm and proceed with your order, please reply to this message with “Confirmed”.
+• If no confirmation message is received within 24 hours, the order will be automatically cancelled.
+
+Thanks for choosing Glam&Glow — we can’t wait for you to enjoy your order! ✨`;
 
         // 🛍️ STORE OWNERS MESSAGE - New Order Notification
         const itemsList = order.items.map(item => {
@@ -628,6 +631,7 @@ process.on('SIGINT', async () => {
     await client.destroy();
     process.exit(0);
 });
+
 
 
 
